@@ -5,6 +5,15 @@ class Project(models.Model):
         ('completed', 'Завершен'),
         ('archived', 'В архиве'),
     ]
+    
+    # --- НОВАЯ КАТЕГОРИЯ ---
+    CATEGORY_CHOICES = [
+        ('web', 'Веб-разработка'),
+        ('app', 'Мобильные приложения'),
+        ('desktop', 'Десктопные приложения'),
+        ('bot', 'Чат-боты и скрипты'),
+        ('other', 'Другое'),
+    ]
 
     title = models.CharField(max_length=200, verbose_name="Название проекта")
     image = models.ImageField(upload_to='projects/', verbose_name="Изображение проекта")
@@ -18,6 +27,8 @@ class Project(models.Model):
     technologies = models.TextField(blank=True, verbose_name="Технологии")
     completion_date = models.DateField(verbose_name="Дата завершения")
     project_url = models.URLField(blank=True, verbose_name="Ссылка на проект")
+    
+    category = models.CharField("Категория", max_length=20, choices=CATEGORY_CHOICES, default='web')
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
@@ -35,3 +46,7 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_category_display_name(self):
+        """Вспомогательный метод, чтобы получать красивое название категории в шаблоне"""
+        return dict(self.CATEGORY_CHOICES).get(self.category, 'Другое')
