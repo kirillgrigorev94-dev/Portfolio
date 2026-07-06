@@ -30,7 +30,7 @@
                     Мои проекты
                 </a>
                 
-                <!-- Ссылка "Архив" (теперь она будет сразу после "Мои проекты") -->
+                <!-- Ссылка "Архив" -->
                 <a class="nav-link {% if request.resolver_match.url_name == 'archive' %}active{% endif %}" 
                    href="{% url 'projects:archive' %}">
                     Архив
@@ -43,9 +43,9 @@
 <div class="container">
     <h1 class="mb-4 text-center">Портфолио проектов</h1>
 
-    {% if projects %}
+    {% if page_obj %}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 align-items-start">
-            {% for project in projects %}
+            {% for project in page_obj %}
                 <div class="col">
                     <div class="card project-card shadow-sm">
                         {% if project.image %}
@@ -124,8 +124,52 @@
                 </div>
             {% endfor %}
         </div>
+
+        <!-- Блок пагинации -->
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    
+                    <!-- Кнопка "Назад" -->
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">← Назад</span>
+                        </li>
+                    {% endif %}
+
+                    <!-- Номера страниц -->
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Кнопка "Вперед" -->
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперед →</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Вперед →</span>
+                        </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+        {% endif %}
     {% else %}
-        <p class="text-center text-muted">Нет опубликованных проектов.</p>
+        <p class="text-center text-muted">Проектов не найдено.</p>
     {% endif %}
 </div>
 
