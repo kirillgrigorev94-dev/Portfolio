@@ -11,9 +11,32 @@
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'projects:project_list' %}">Мои проекты</a>
+        <!-- Логотип/Название слева -->
+        <a class="navbar-brand" href="{% url 'projects:project_list' %}">Портфолио</a>
+        
+        <!-- Кнопка для мобильного меню (если нужно) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Блок навигации -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav">
+                <!-- Ссылка "Мои проекты" -->
+                <a class="nav-link {% if request.resolver_match.url_name == 'project_list' %}active{% endif %}" 
+                   href="{% url 'projects:project_list' %}">
+                    Мои проекты
+                </a>
+                
+                <!-- Ссылка "Архив" (теперь она будет сразу после "Мои проекты") -->
+                <a class="nav-link {% if request.resolver_match.url_name == 'archive' %}active{% endif %}" 
+                   href="{% url 'projects:archive' %}">
+                    Архив
+                </a>
+            </div>
+        </div>
     </div>
 </nav>
 

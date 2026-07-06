@@ -1,3 +1,7 @@
+.navbar-brand {
+    margin-right: 60px; /* Точный отступ в пикселях */
+}
+
 .project-card {
     display: flex;
     flex-direction: column;
