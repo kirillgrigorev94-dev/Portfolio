@@ -120,3 +120,62 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Создаём папку logs, если её нет
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} | {asctime} | {module}.{funcName}:{lineno} | {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        # Логи Django (миграции, админ, запросы и т.п.)
+        'file_django': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': str(LOGS_DIR / 'django.log'),
+            'formatter': 'verbose',
+        },
+        # Логи твоего приложения (views, логика проектов)
+        'file_project': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': str(LOGS_DIR / 'project.log'),
+            'formatter': 'verbose',
+        },
+        # Вывод в консоль (только при DEBUG=True, чтобы не засорять терминал на продакшене)
+        'console': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+            'filters': ['require_debug_true'] if DEBUG else [],
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file_django', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'projects': {  # имя приложения из INSTALLED_APPS
+            'handlers': ['file_project', 'console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+    },
+}
